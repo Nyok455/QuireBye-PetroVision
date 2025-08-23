@@ -195,18 +195,37 @@ export class ManagementHandler {
       const text = await file.text();
       const data = this.parseCSV(text);
 
-      // Validate headers
-      const expectedHeaders = ["INDEX", "TOWN", "STATE", "DATES", "PRICES"];
-      const headers = Object.keys(data[0] || {});
+      // More flexible header validation - check if essential headers exist
+      // Allow for different case or slight variations in header names
+      const essentialHeaders = ["TOWN", "STATE", "DATES", "PRICES"];
+      const headers = Object.keys(data[0] || {}).map((h) => h.toUpperCase());
 
-      const missingHeaders = expectedHeaders.filter(
-        (h) => !headers.includes(h)
+      // Check if we have the essential price data headers (case insensitive)
+      const missingHeaders = essentialHeaders.filter(
+        (h) => !headers.some((header) => header.includes(h))
       );
+
       if (missingHeaders.length > 0) {
-        throw new Error(`Missing headers: ${missingHeaders.join(", ")}`);
+        throw new Error(
+          `Missing essential headers: ${missingHeaders.join(", ")}`
+        );
       }
 
-      this.priceData = data;
+      // Map data to expected format if headers don't exactly match
+      const normalizedData = data.map((row) => {
+        const normalizedRow = {};
+        Object.keys(row).forEach((key) => {
+          const upperKey = key.toUpperCase();
+          if (upperKey.includes("TOWN")) normalizedRow.TOWN = row[key];
+          if (upperKey.includes("STATE")) normalizedRow.STATE = row[key];
+          if (upperKey.includes("DATE")) normalizedRow.DATES = row[key];
+          if (upperKey.includes("PRICE")) normalizedRow.PRICES = row[key];
+          if (upperKey.includes("INDEX")) normalizedRow.INDEX = row[key];
+        });
+        return normalizedRow;
+      });
+
+      this.priceData = normalizedData;
       this.renderPriceFluctuationChart();
       this.updatePriceSummary();
 
@@ -472,6 +491,8 @@ export class ManagementHandler {
       }
     } catch (error) {
       console.log("No existing price data found, will load on upload");
+      // Create empty price data structure to avoid errors
+      this.priceData = [];
     }
   }
 

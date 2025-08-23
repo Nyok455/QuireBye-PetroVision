@@ -330,6 +330,8 @@ body {
 .hero-content {
   text-align: left;
   animation: fadeInUp 1s ease-out;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .hero-badge {
@@ -461,6 +463,13 @@ body {
   text-align: center;
   margin-bottom: 50px;
   color: var(--primary-dark);
+}
+
+/* Wider container for home page sections */
+#home .container {
+  max-width: 100%;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .section-title h2 {
