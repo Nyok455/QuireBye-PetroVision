@@ -5,6 +5,7 @@ import { DataHandler } from "./modules/dataHandler.js";
 import { ChartRenderer } from "./modules/chartRenderer.js";
 import { UIComponents } from "./modules/uiComponents.js";
 import { FileProcessor } from "./modules/fileProcessor.js";
+import { ManagementHandler } from "./modules/managementHandler.js";
 
 class OilGasDashboard {
   constructor() {
@@ -12,6 +13,7 @@ class OilGasDashboard {
     this.charts = new ChartRenderer();
     this.ui = new UIComponents();
     this.files = new FileProcessor();
+    this.management = new ManagementHandler();
 
     this.wellData = [];
     this.currentFieldFilter = "all";
@@ -114,6 +116,23 @@ class OilGasDashboard {
       this.charts.forecastChart(forecastCanvas, months, fc);
     }
 
+    // Water Cut Analysis Chart
+    const waterCutCanvas = document.getElementById("waterCutChart");
+    if (waterCutCanvas) {
+      const fields = [...new Set(this.wellData.map((w) => w.field))];
+      const waterCutData = fields.map((f) => {
+        const fieldWells = this.wellData.filter(
+          (w) => w.field === f && w.status === "Producing"
+        );
+        if (fieldWells.length === 0) return 0;
+        const avgWaterCut =
+          fieldWells.reduce((sum, w) => sum + w.waterCut, 0) /
+          fieldWells.length;
+        return Math.round(avgWaterCut * 100) / 100;
+      });
+      this.charts.waterCutChart(waterCutCanvas, fields, waterCutData);
+    }
+
     // Optional forecast chart for Management page
     const mgtForecastCanvas = document.getElementById("mgtForecastChart");
     if (mgtForecastCanvas) {
@@ -123,6 +142,9 @@ class OilGasDashboard {
         (_, i) => `M${i + 1}`
       );
       this.charts.forecastChart(mgtForecastCanvas, months, fc);
+
+      // Update management page KPIs
+      this.updateManagementKPIs();
     }
   }
 
@@ -248,6 +270,15 @@ class OilGasDashboard {
     // File upload handling
     this.setupFileUploadListeners();
 
+    // Forecast CSV upload
+    const uploadForecastBtn = document.getElementById("upload-forecast-btn");
+    if (uploadForecastBtn)
+      uploadForecastBtn.addEventListener("click", () =>
+        new bootstrap.Modal(
+          document.getElementById("forecastUploadModal")
+        ).show()
+      );
+
     // Save settings
     const saveSettingsBtn = document.getElementById("save-settings");
     if (saveSettingsBtn)
@@ -342,6 +373,444 @@ class OilGasDashboard {
       document.getElementById("upload-status").innerHTML =
         '<div class="alert alert-success">Data processed successfully.</div>';
     });
+
+    // Forecast CSV upload handlers
+    this.setupForecastUploadListeners();
+  }
+
+  setupForecastUploadListeners() {
+    const forecastFileInput = document.getElementById("forecast-file-input");
+    const forecastDropZone = document.getElementById("forecast-drop-zone");
+    const processForecastBtn = document.getElementById("process-forecast-btn");
+    const downloadForecastSample = document.getElementById(
+      "download-forecast-sample"
+    );
+
+    if (downloadForecastSample) {
+      downloadForecastSample.addEventListener("click", (e) => {
+        e.preventDefault();
+        const csv = this.createForecastTemplate();
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "forecast_template.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    if (!forecastFileInput || !forecastDropZone || !processForecastBtn) return;
+
+    forecastDropZone.addEventListener("click", () => forecastFileInput.click());
+
+    forecastFileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        processForecastBtn.disabled = false;
+        forecastDropZone.innerHTML = `
+          <div class="file-upload-icon text-success"><i class="fas fa-check-circle"></i></div>
+          <p>File selected: ${e.target.files[0].name}</p>
+          <p class="small">Click "Process Forecast Data" to continue</p>
+        `;
+      }
+    });
+
+    // Drag & drop for forecast
+    forecastDropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      forecastDropZone.style.borderColor = "#2c5985";
+      forecastDropZone.style.backgroundColor = "rgba(44, 89, 133, 0.1)";
+    });
+    forecastDropZone.addEventListener("dragleave", () => {
+      forecastDropZone.style.borderColor = "#dee2e6";
+      forecastDropZone.style.backgroundColor = "transparent";
+    });
+    forecastDropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      forecastDropZone.style.borderColor = "#dee2e6";
+      forecastDropZone.style.backgroundColor = "transparent";
+      if (e.dataTransfer.files.length > 0) {
+        forecastFileInput.files = e.dataTransfer.files;
+        processForecastBtn.disabled = false;
+        forecastDropZone.innerHTML = `
+          <div class="file-upload-icon text-success"><i class="fas fa-check-circle"></i></div>
+          <p>File selected: ${e.dataTransfer.files[0].name}</p>
+          <p class="small">Click "Process Forecast Data" to continue</p>
+        `;
+      }
+    });
+
+    processForecastBtn.addEventListener("click", async () => {
+      if (!forecastFileInput.files.length) return;
+      const file = forecastFileInput.files[0];
+      const text = await file.text();
+      const forecastData = this.processForecastCSV(text);
+      if (forecastData) {
+        this.updateForecastChart(forecastData);
+        this.updateManagementForecastChart(forecastData);
+        document.getElementById("forecast-upload-status").innerHTML =
+          '<div class="alert alert-success">Forecast data processed successfully.</div>';
+        document.getElementById(
+          "forecast-data-source"
+        ).textContent = `Data from uploaded CSV: ${
+          file.name
+        } (${new Date().toLocaleDateString()})`;
+        bootstrap.Modal.getInstance(
+          document.getElementById("forecastUploadModal")
+        ).hide();
+
+        // Navigate to management dashboard to show the updated forecast
+        setTimeout(() => {
+          this.showPage("management");
+        }, 500);
+      } else {
+        document.getElementById("forecast-upload-status").innerHTML =
+          '<div class="alert alert-danger">Error processing forecast data. Please check the file format.</div>';
+      }
+    });
+  }
+
+  createForecastTemplate() {
+    const months = [];
+    const currentDate = new Date();
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + i,
+        1
+      );
+      months.push(
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      );
+    }
+
+    let csv = "Month,Production (BOE/d)\n";
+    months.forEach((month, index) => {
+      const production = 45000 - index * 2000; // Example declining production
+      csv += `${month},${production}\n`;
+    });
+    return csv;
+  }
+
+  processForecastCSV(csvText) {
+    try {
+      const lines = csvText.trim().split("\n");
+      const headers = lines[0].split(",").map((h) => h.trim());
+
+      // Check for month columns in the headers
+      const monthColumns = headers.filter((h) =>
+        /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}$/.test(h)
+      );
+
+      if (monthColumns.length > 0) {
+        // Check if it's the production.csv format (Category, Field, months, Unit)
+        if (headers.includes("Category") && headers.includes("Field")) {
+          return this.processProductionFormat(lines, headers);
+        } else {
+          // Process South Sudan forecast format (Field, months)
+          return this.processSouthSudanFormat(lines, headers);
+        }
+      } else {
+        // Process simple Month, Production format
+        return this.processSimpleFormat(lines, headers);
+      }
+    } catch (error) {
+      console.error("Error processing forecast CSV:", error);
+      return null;
+    }
+  }
+
+  processProductionFormat(lines, headers) {
+    const categoryIndex = headers.indexOf("Category");
+    const fieldIndex = headers.indexOf("Field");
+    const unitIndex = headers.indexOf("Unit");
+
+    // Get month column indices
+    const monthColumns = headers.filter((h) =>
+      /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}$/.test(h)
+    );
+
+    const fieldData = {};
+    let totalsByMonth = {};
+
+    // Initialize totals
+    monthColumns.forEach((month) => {
+      totalsByMonth[month] = 0;
+    });
+
+    // Process each line, focus on Oil Production for forecast
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line || line === "-") continue; // Skip empty lines and separators
+
+      const values = line.split(",").map((v) => v.trim());
+      const category = values[categoryIndex];
+      const fieldName = values[fieldIndex];
+
+      // Only process Oil Production data for forecast
+      if (
+        category === "Oil Production" &&
+        fieldName &&
+        fieldName.toLowerCase() !== "total"
+      ) {
+        fieldData[fieldName] = {};
+
+        monthColumns.forEach((month) => {
+          const monthIndex = headers.indexOf(month);
+          if (monthIndex !== -1 && values[monthIndex]) {
+            const production = parseFloat(values[monthIndex]) || 0;
+            fieldData[fieldName][month] = production;
+            totalsByMonth[month] += production;
+          }
+        });
+      }
+    }
+
+    // Convert to chart format
+    const chartData = {
+      months: monthColumns,
+      total: monthColumns.map((month) => totalsByMonth[month]),
+      fields: fieldData,
+    };
+
+    return chartData;
+  }
+
+  processSouthSudanFormat(lines, headers) {
+    const monthColumns = headers
+      .slice(1)
+      .filter((h) =>
+        /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}$/.test(h)
+      );
+
+    const fieldData = {};
+    let totalsByMonth = {};
+
+    // Initialize totals
+    monthColumns.forEach((month) => {
+      totalsByMonth[month] = 0;
+    });
+
+    // Process each field
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(",").map((v) => v.trim());
+      const fieldName = values[0];
+
+      if (fieldName && fieldName.toLowerCase() !== "total") {
+        fieldData[fieldName] = {};
+        monthColumns.forEach((month, index) => {
+          const production = parseFloat(values[index + 1]) || 0;
+          fieldData[fieldName][month] = production;
+          totalsByMonth[month] += production;
+        });
+      }
+    }
+
+    // Convert to chart format
+    const chartData = {
+      months: monthColumns,
+      total: monthColumns.map((month) => totalsByMonth[month]),
+      fields: fieldData,
+    };
+
+    return chartData;
+  }
+
+  processSimpleFormat(lines, headers) {
+    const monthIndex = headers.findIndex(
+      (h) =>
+        h.toLowerCase().includes("month") || h.toLowerCase().includes("date")
+    );
+    const productionIndex = headers.findIndex(
+      (h) =>
+        h.toLowerCase().includes("production") ||
+        h.toLowerCase().includes("boe")
+    );
+
+    if (monthIndex === -1 || productionIndex === -1) {
+      console.error("Required columns not found. Expected: Month, Production");
+      return null;
+    }
+
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(",").map((v) => v.trim());
+      if (values.length >= Math.max(monthIndex, productionIndex) + 1) {
+        data.push({
+          month: values[monthIndex],
+          production:
+            parseFloat(values[productionIndex].replace(/[^\d.-]/g, "")) || 0,
+        });
+      }
+    }
+
+    return {
+      months: data.map((d) => d.month),
+      total: data.map((d) => d.production),
+      fields: {},
+    };
+  }
+
+  updateForecastChart(forecastData) {
+    const chart = this.charts?.forecast || Chart.getChart("forecastChart");
+    if (chart) {
+      chart.data.labels = forecastData.months;
+
+      // Clear existing datasets
+      chart.data.datasets = [];
+
+      // Add total production line
+      chart.data.datasets.push({
+        label: "Total Production Forecast",
+        data: forecastData.total,
+        borderColor: "#2c5985",
+        backgroundColor: "rgba(44, 89, 133, 0.1)",
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: "#2c5985",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+      });
+
+      // Add individual field lines (top 5 fields by average production)
+      const fieldEntries = Object.entries(forecastData.fields);
+      if (fieldEntries.length > 0) {
+        const fieldAverages = fieldEntries.map(([field, data]) => {
+          const values = Object.values(data);
+          const avg = values.reduce((a, b) => a + b, 0) / values.length;
+          return { field, avg, data };
+        });
+
+        fieldAverages.sort((a, b) => b.avg - a.avg);
+        const topFields = fieldAverages.slice(0, 5);
+
+        const colors = ["#ff6b6b", "#4ecdc4", "#45b7d1", "#f7dc6f", "#bb8fce"];
+
+        topFields.forEach((fieldInfo, index) => {
+          const fieldData = forecastData.months.map(
+            (month) => fieldInfo.data[month] || 0
+          );
+
+          chart.data.datasets.push({
+            label: fieldInfo.field,
+            data: fieldData,
+            borderColor: colors[index % colors.length],
+            backgroundColor: "transparent",
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            pointBackgroundColor: colors[index % colors.length],
+            pointBorderColor: "#fff",
+            pointBorderWidth: 1,
+            pointRadius: 3,
+          });
+        });
+      }
+
+      chart.update();
+    } else {
+      // If no existing chart, recreate it
+      const forecastCanvas = document.getElementById("forecastChart");
+      if (forecastCanvas) {
+        this.recreateForecastChart(forecastCanvas, forecastData);
+      }
+    }
+  }
+
+  recreateForecastChart(canvas, forecastData) {
+    // Destroy existing chart if any
+    this.charts?.destroy?.("forecast");
+
+    const datasets = [];
+
+    // Add total production line
+    datasets.push({
+      label: "Total Production Forecast",
+      data: forecastData.total,
+      borderColor: "#2c5985",
+      backgroundColor: "rgba(44, 89, 133, 0.1)",
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: "#2c5985",
+      pointBorderColor: "#fff",
+      pointBorderWidth: 2,
+      pointRadius: 5,
+    });
+
+    // Add individual field lines (top 5 fields by average production)
+    const fieldEntries = Object.entries(forecastData.fields);
+    if (fieldEntries.length > 0) {
+      const fieldAverages = fieldEntries.map(([field, data]) => {
+        const values = Object.values(data);
+        const avg = values.reduce((a, b) => a + b, 0) / values.length;
+        return { field, avg, data };
+      });
+
+      fieldAverages.sort((a, b) => b.avg - a.avg);
+      const topFields = fieldAverages.slice(0, 5);
+
+      const colors = ["#ff6b6b", "#4ecdc4", "#45b7d1", "#f7dc6f", "#bb8fce"];
+
+      topFields.forEach((fieldInfo, index) => {
+        const fieldData = forecastData.months.map(
+          (month) => fieldInfo.data[month] || 0
+        );
+
+        datasets.push({
+          label: fieldInfo.field,
+          data: fieldData,
+          borderColor: colors[index % colors.length],
+          backgroundColor: "transparent",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointBackgroundColor: colors[index % colors.length],
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1,
+          pointRadius: 3,
+        });
+      });
+    }
+
+    // Create new chart
+    if (!this.charts) this.charts = { destroy: () => {} };
+    this.charts.forecast = new Chart(canvas.getContext("2d"), {
+      type: "line",
+      data: { labels: forecastData.months, datasets },
+      options: {
+        maintainAspectRatio: false,
+        plugins: { legend: { position: "bottom" } },
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Production (BOE/d)",
+            },
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Month",
+            },
+          },
+        },
+      },
+    });
+  }
+
+  updateManagementForecastChart(forecastData) {
+    const mgtForecastCanvas = document.getElementById("mgtForecastChart");
+    if (mgtForecastCanvas) {
+      // Use the same chartRenderer method that's used in initializeCharts
+      this.recreateForecastChart(mgtForecastCanvas, forecastData);
+    }
   }
 
   // Populate Management (CEO) snapshot numbers on initial load
@@ -404,11 +873,40 @@ class OilGasDashboard {
   }
 
   showPage(page) {
-    document
-      .querySelectorAll(".page-section")
-      .forEach((sec) => sec.classList.remove("active"));
-    const el = document.getElementById(page);
-    if (el) el.classList.add("active");
+    // Show loading animation for page transitions
+    if (window.loadingAnimation) {
+      window.loadingAnimation.showPageLoading(page);
+    }
+
+    // Add fade-out effect to current page
+    const currentPage = document.querySelector(".page-section.active");
+    if (currentPage) {
+      currentPage.style.opacity = "0";
+      currentPage.style.transform = "translateY(-20px)";
+    }
+
+    setTimeout(() => {
+      document.querySelectorAll(".page-section").forEach((sec) => {
+        sec.classList.remove("active");
+        sec.style.opacity = "";
+        sec.style.transform = "";
+      });
+
+      const el = document.getElementById(page);
+      if (el) {
+        el.classList.add("active");
+
+        // Trigger re-initialization for specific pages
+        if (page === "dashboard" || page === "management") {
+          setTimeout(() => {
+            this.initializeCharts();
+            if (page === "management") {
+              this.updateManagementKPIs();
+            }
+          }, 100);
+        }
+      }
+    }, 150);
   }
 
   showWellDetails(wellId) {
@@ -442,6 +940,31 @@ class OilGasDashboard {
       document.getElementById("wellDetailsModal")
     );
     modal.show();
+  }
+
+  updateManagementKPIs() {
+    const kpis = this.data.calcKPIs();
+
+    // Update management page KPI values
+    const mgtProdEl = document.getElementById("mgt-total-production");
+    const mgtWellsEl = document.getElementById("mgt-wells");
+    const mgtWaterEl = document.getElementById("mgt-water-cut");
+    const mgtProdChangeEl = document.getElementById("mgt-prod-change");
+    const mgtWellsChangeEl = document.getElementById("mgt-wells-change");
+    const mgtWaterChangeEl = document.getElementById("mgt-water-change");
+
+    if (mgtProdEl && mgtWellsEl && mgtWaterEl) {
+      mgtProdEl.innerHTML = `${kpis.totalProduction.toLocaleString()} <small>BOE/d</small>`;
+      mgtWellsEl.textContent = this.wellData
+        .filter((w) => w.status === "Producing")
+        .length.toLocaleString();
+      mgtWaterEl.textContent = `${kpis.avgWaterCut.toFixed(1)}%`;
+
+      // Add some simulated changes
+      if (mgtProdChangeEl) mgtProdChangeEl.textContent = "+2.3%";
+      if (mgtWellsChangeEl) mgtWellsChangeEl.textContent = "+1.8%";
+      if (mgtWaterChangeEl) mgtWaterChangeEl.textContent = "-0.5%";
+    }
   }
 }
 

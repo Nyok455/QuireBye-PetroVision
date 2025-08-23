@@ -152,4 +152,57 @@ export class ChartRenderer {
       },
     });
   }
+
+  // Water Cut Analysis Chart
+  waterCutChart(ctx, fields, waterCutData) {
+    if (!ctx) return;
+    this.destroy("waterCut");
+    this.charts.waterCut = new Chart(ctx.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: fields,
+        datasets: [
+          {
+            label: "Water Cut (%)",
+            data: waterCutData,
+            backgroundColor: [
+              "#1282c4",
+              "#f6851f",
+              "#4a7bab",
+              "#6c757d",
+              "#20c997",
+            ],
+            borderColor: [
+              "#0d3d91",
+              "#e67e22",
+              "#2c5985",
+              "#495057",
+              "#17a2b8",
+            ],
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: function (value) {
+                return value + "%";
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

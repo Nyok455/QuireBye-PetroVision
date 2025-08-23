@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuireBye PetroVision | Oil & Gas Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components/header.css">
+    <link rel="stylesheet" href="css/components/charts.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#" data-page="home">
+                <img src="assets/images/logo.png" alt="QuireBye PetroVision" style="height:34px;width:auto;border-radius:4px;margin-right:8px;object-fit:contain;"/>
+                QuireBye PetroVision
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-page="home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="management">Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="insights">Insights</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home" class="page-section active">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="container">
+                <h1>QuireBye PetroVision — South Sudan Energy Intelligence</h1>
+                <p>Real-time oilfield analytics and operations support across Melut and Muglad basins. Built for reliability, safety, and performance.</p>
+                <a href="#" data-page="dashboard" class="btn btn-primary btn-lg">View Dashboard</a>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="container py-5">
+            <div class="section-title">
+                <h2>About QuireBye PetroVision</h2>
+                <p>We deliver data-driven production optimization, field development planning, and ESG programs tailored to South Sudan's upstream sector.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <i class="fas fa-oil-well"></i>
+                        </div>
+                        <h3>Production Optimization</h3>
+                        <p>Integrated subsurface and facilities workflows to lift constraints, reduce water cut, and extend plateau life.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3>Surface Engineering</h3>
+                        <p>CPF debottlenecking, gathering systems, and power solutions engineered for uptime in challenging environments.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="about-item">
+                        <div class="about-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h3>Logistics & HSE</h3>
+                        <p>Pipeline integrity, crude evacuation, and safety systems aligned with international standards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="services">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Our Services</h2>
+                    <p>Comprehensive solutions tailored to meet the unique challenges of the modern energy industry.</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="service-card">
+                            <div class="service-img">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="service-content">
+                                <h3>Exploration Services</h3>
+                                <p>Advanced geological surveys and analysis to identify promising reserves with precision.</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="service-card">
+                            <div class="service-img">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="service-content">
+                                <h3>Production Optimization</h3>
+                                <p>Maximize output from existing wells through advanced recovery techniques and data analysis.</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="service-card">
+                            <div class="service-img">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="service-content">
+                                <h3>Safety & Compliance</h3>
+                                <p>Comprehensive safety programs and regulatory compliance solutions for all operations.</p>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Page -->
+    <section id="dashboard" class="page-section">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="dashboard-title">South Sudan Wells Summary Dashboard</h1>
+                        <div class="dashboard-subtitle">Last updated: <span id="current-date-time"></span></div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-sm btn-light me-2" id="export-btn"><i class="fas fa-download me-1"></i> Export</button>
+                        <button class="btn btn-sm btn-outline-light" id="settings-btn"><i class="fas fa-cog"></i></button>
+                        <button class="btn btn-sm btn-outline-light ms-2" id="upload-btn"><i class="fas fa-upload me-1"></i> Upload Data</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <button class="filter-btn active" data-field="all">All Fields</button>
+                        <button class="filter-btn" data-field="paloch">Paloch</button>
+                        <button class="filter-btn" data-field="melut-basin">Melut Basin</button>
+                        <button class="filter-btn" data-field="muglad-basin">Muglad Basin</button>
+                        <button class="filter-btn" data-field="heglig">Heglig</button>
+                        <button class="filter-btn" data-field="unity">Unity</button>
+                        <button class="filter-btn" id="more-filters-btn"><i class="fas fa-filter me-1"></i> More Filters</button>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <select class="date-filter" id="date-filter">
+                            <option>Last 7 Days</option>
+                            <option selected>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                            <option>Year to Date</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 5 Wells Bar (Fixed Position) -->
+        <div class="top-wells-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <strong>Top 5 Wells:</strong>
+                    </div>
+                    <div class="col-md-10">
+                        <div id="top-wells-list" class="d-flex flex-wrap">
+                            <!-- Top wells will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="container-fluid">
+                <!-- KPI Summary Row -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Total Wells</div>
+                            <div class="kpi-value" id="total-wells">0</div>
+                            <div class="kpi-trend trend-up"><i class="fas fa-arrow-up me-1"></i> <span id="wells-change">0%</span> from last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Daily Production</div>
+                            <div class="kpi-value" id="daily-production">0 <small>BOE/d</small></div>
+                            <div class="kpi-trend trend-up"><i class="fas fa-arrow-up me-1"></i> <span id="production-change">0%</span> from last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Avg. Production per Well</div>
+                            <div class="kpi-value" id="avg-production">0 <small>BOE/d</small></div>
+                            <div class="kpi-trend trend-up"><i class="fas fa-arrow-up me-1"></i> <span id="avg-production-change">0%</span> from last month</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card kpi-card">
+                            <div class="kpi-title">Water Cut</div>
+                            <div class="kpi-value" id="water-cut">0%</div>
+                            <div class="kpi-trend trend-down"><i class="fas fa-arrow-down me-1"></i> <span id="water-cut-change">0%</span> from last month</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row 1 -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">Production Trend (Last 6 Months)</div>
+                            <div class="chart-container">
+                                <canvas id="productionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">Well Status Distribution</div>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Row 2 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Production by Field (BOE/d)</div>
+                            <div class="chart-container">
+                                <canvas id="fieldChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Production Type Share</div>
+                            <div class="chart-container">
+                                <canvas id="productionTypeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 3 -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">12-Month Production Forecast</div>
+                            <div class="chart-container">
+                                <canvas id="forecastChart"></canvas>
+                                <div class="small text-muted px-3 py-2">
+                                    Assumptions: exponential decline 7%/month aggregated by field; illustrative only.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wells Data Table -->
+        <div class="table-section">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Wells Data Table</h5>
+                        <div class="d-flex align-items-center">
+                            <label for="rows-per-page" class="me-2">Show:</label>
+                            <select id="rows-per-page" class="form-select form-select-sm me-3" style="width: auto;">
+                                <option value="10">10 rows</option>
+                                <option value="25">25 rows</option>
+                                <option value="50">50 rows</option>
+                                <option value="100">100 rows</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="wells-table">
+                            <thead>
+                                <tr>
+                                    <th>Well Name</th>
+                                    <th>Field</th>
+                                    <th>Status</th>
+                                    <th>Production (BOE/d)</th>
+                                    <th>Change (%)</th>
+                                    <th>Water Cut (%)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wells-table-body">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div>
+                            Showing <span id="showing-start">0</span> to <span id="showing-end">0</span> of <span id="total-records">0</span> wells
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item">
+                                    <button class="page-link" id="prev-page" disabled>Previous</button>
+                                </li>
+                                <li class="page-item">
+                                    <button class="page-link" id="next-page" disabled>Next</button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Page -->
+    <section id="projects" class="page-section">
+        <div class="container py-5">
+            <div class="section-title">
+                <h2>Strategic Projects in South Sudan</h2>
+                <p>High-impact developments across Melut and Muglad basins aligned with QuireBye PetroVision's growth strategy.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <div class="project-img">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="project-content">
+                            <span class="project-status status-ongoing">Ongoing</span>
+                            <h3>Paloch Infill Drilling</h3>
+                            <p>Multi-well infill program targeting higher permeability zones to reduce decline and increase oil cut.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Phase 1: 2025</small>
+                                <span class="badge bg-primary">15 wells</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <div class="project-img">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="project-content">
+                            <span class="project-status status-planning">Planning</span>
+                            <h3>Melut CPF Debottlenecking</h3>
+                            <p>Surface optimization and water handling upgrades to add 20–30 kbopd gross processing capacity.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">FEED: 2025</small>
+                                <span class="badge bg-success">+25 kbopd</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Management Page -->
+    <section id="management" class="page-section">
+      <div class="container py-5">
+        <div class="section-title">
+          <h2>Management Dashboard</h2>
+          <p>Executive overview of operations, analytics, and company portfolio.</p>
+        </div>
+
+        <!-- CEO Profile Section -->
+        <div class="row g-4 mb-5">
+          <div class="col-lg-4">
+            <div class="card ceo-profile-card h-100">
+              <div class="card-body text-center">
+                <img src="assets/images/logo.png" alt="CEO Profile" class="ceo-avatar mb-3"/>
+                <h4 class="ceo-name">Nyok Wuor Miyar</h4>
+                <p class="ceo-title text-muted mb-3">Executive CEO</p>
+                <p class="ceo-bio small text-muted mb-4">
+                  Visionary leader with 15+ years experience in South Sudan's energy sector. 
+                  Founded QuireBye PetroVision to deliver data-driven production optimization 
+                  and ESG programs for the upstream oil & gas industry.
+                </p>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary btn-sm" onclick="downloadCV()">
+                    <i class="fas fa-download me-2"></i>Download CV
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="contactCEO()">
+                    <i class="fas fa-envelope me-2"></i>Contact
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-8">
+            <div class="card company-history-card h-100">
+              <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-building me-2"></i>QuireBye PetroVision History</h5>
+              </div>
+              <div class="card-body">
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                      <h6>Company Foundation</h6>
+                      <p class="small">Established as a specialized energy intelligence company focused on South Sudan's upstream sector.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                      <h6>Melut Basin Operations</h6>
+                      <p class="small">Secured major contracts for production optimization across multiple fields in Melut Basin.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                      <h6>Technology Innovation</h6>
+                      <p class="small">Launched PetroVision analytics platform for real-time field monitoring and predictive insights.</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-content">
+                      <h6>Expansion & ESG</h6>
+                      <p class="small">Expanded to Muglad Basin operations and integrated comprehensive ESG reporting systems.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Analytics Section -->
+        <div class="row g-4 mb-5">
+          <div class="col-lg-8">
+            <div class="card dashboard-analytics">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Management Analytics Dashboard</h5>
+                <div class="dashboard-controls">
+                  <button class="btn btn-sm btn-outline-primary me-2" id="upload-well-logs">
+                    <i class="fas fa-upload me-1"></i>Upload Well Logs
+                  </button>
+                  <button class="btn btn-sm btn-outline-success" id="upload-price-data">
+                    <i class="fas fa-dollar-sign me-1"></i>Upload Price Data
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- KPI Row -->
+                <div class="row g-3 mb-4">
+                  <div class="col-md-4">
+                    <div class="card kpi-card">
+                      <div class="kpi-title">Total Production</div>
+                      <div class="kpi-value" id="mgt-total-production">— <small>BOE/d</small></div>
+                      <div class="kpi-trend trend-up"><i class="fas fa-arrow-up me-1"></i><span id="mgt-prod-change">—</span> mom</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card kpi-card">
+                      <div class="kpi-title">Operating Wells</div>
+                      <div class="kpi-value" id="mgt-wells">—</div>
+                      <div class="kpi-trend trend-up"><i class="fas fa-arrow-up me-1"></i><span id="mgt-wells-change">—</span> mom</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="card kpi-card">
+                      <div class="kpi-title">Water Cut</div>
+                      <div class="kpi-value" id="mgt-water-cut">—%</div>
+                      <div class="kpi-trend trend-down"><i class="fas fa-arrow-down me-1"></i><span id="mgt-water-change">—</span> mom</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <div class="chart-header">Production Forecast</div>
+                      <div class="chart-container">
+                        <canvas id="mgtForecastChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="chart-card">
+                      <div class="chart-header">Price Fluctuation</div>
+                      <div class="chart-container">
+                        <canvas id="priceFluctuationChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Well Logs Display -->
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <div class="well-logs-section" id="well-logs-section" style="display: none;">
+                      <div class="chart-header">Well Logs Analysis</div>
+                      <div class="chart-container">
+                        <canvas id="wellLogsChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card price-summary-card h-100">
+              <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-oil-can me-2"></i>Regional Price Summary</h6>
+              </div>
+              <div class="card-body">
+                <div id="price-summary-list">
+                  <p class="text-muted text-center">Upload price data to view summary</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GitHub Projects Section -->
+        <div class="row g-4">
+          <div class="col-12">
+            <div class="card github-projects-card">
+              <div class="card-header">
+                <h5 class="mb-0"><i class="fab fa-github me-2"></i>GitHub Projects Portfolio</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-4">
+                  <div class="col-md-4">
+                    <div class="github-project-card">
+                      <div class="project-icon">
+                        <i class="fas fa-chart-bar"></i>
+                      </div>
+                      <div class="project-content">
+                        <h6 class="project-title">Data Analysis for Petroleum Industries</h6>
+                        <p class="project-description small text-muted mb-3">
+                          Comprehensive data analytics toolkit for petroleum industry metrics, 
+                          production forecasting, and reservoir performance analysis using Python and R.
+                        </p>
+                        <div class="project-stats mb-3">
+                          <span class="badge bg-primary me-2">Python</span>
+                          <span class="badge bg-success me-2">Ongoing</span>
+                          <span class="text-muted small"><i class="fas fa-star me-1"></i>24 stars</span>
+                        </div>
+                        <a href="https://github.com/nyokwuor/data-analysis-petroleum" target="_blank" class="btn btn-outline-dark btn-sm">
+                          <i class="fab fa-github me-1"></i>View Repository
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="github-project-card">
+                      <div class="project-icon">
+                        <i class="fas fa-robot"></i>
+                      </div>
+                      <div class="project-content">
+                        <h6 class="project-title">ML and AI in Oil Industry</h6>
+                        <p class="project-description small text-muted mb-3">
+                          Machine learning models for predictive maintenance, anomaly detection, 
+                          and production optimization in oil field operations.
+                        </p>
+                        <div class="project-stats mb-3">
+                          <span class="badge bg-warning me-2">TensorFlow</span>
+                          <span class="badge bg-info me-2">Active</span>
+                          <span class="text-muted small"><i class="fas fa-star me-1"></i>37 stars</span>
+                        </div>
+                        <a href="https://github.com/nyokwuor/ml-ai-oil-industry" target="_blank" class="btn btn-outline-dark btn-sm">
+                          <i class="fab fa-github me-1"></i>View Repository
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="github-project-card">
+                      <div class="project-icon">
+                        <i class="fas fa-user-cog"></i>
+                      </div>
+                      <div class="project-content">
+                        <h6 class="project-title">Personal Projects</h6>
+                        <p class="project-description small text-muted mb-3">
+                          Collection of personal development projects including web applications, 
+                          automation scripts, and experimental tools for energy sector analysis.
+                        </p>
+                        <div class="project-stats mb-3">
+                          <span class="badge bg-secondary me-2">Mixed</span>
+                          <span class="badge bg-light text-dark me-2">Various</span>
+                          <span class="text-muted small"><i class="fas fa-star me-1"></i>12 stars</span>
+                        </div>
+                        <a href="https://github.com/nyokwuor/personal-projects" target="_blank" class="btn btn-outline-dark btn-sm">
+                          <i class="fab fa-github me-1"></i>View Repository
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload Modals -->
+      <div class="modal fade" id="wellLogsModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Upload Well Logs Data</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <p class="text-muted">Upload CSV file with headers: Depth, WOB, SURF_RPM, ROP_AVG, PHIF, VSH, SW, KLOGH</p>
+              <div class="drop-zone" id="well-logs-drop-zone">
+                <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <p>Drag & drop your CSV file here, or click to browse</p>
+                <input type="file" id="well-logs-input" accept=".csv" hidden>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="process-well-logs" disabled>Process Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="priceDataModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Upload Price Data</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <p class="text-muted">Upload CSV file with headers: INDEX, TOWN, STATE, DATES, PRICES</p>
+              <div class="drop-zone" id="price-data-drop-zone">
+                <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <p>Drag & drop your CSV file here, or click to browse</p>
+                <input type="file" id="price-data-input" accept=".csv" hidden>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="process-price-data" disabled>Process Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Insights Page -->
+    <section id="insights" class="page-section">
+        <div class="container py-5">
+            <div class="section-title">
+                <h2>Field Intelligence & Analytics</h2>
+                <p>Actionable insights from real-time monitoring, predictive models, and performance benchmarking.</p>
+            </div>
+            
+            <!-- Performance Metrics -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h4>98.2%</h4>
+                            <p>Uptime Efficiency</p>
+                            <small class="text-success"><i class="fas fa-arrow-up"></i> +2.1% vs target</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h4>-5.8%</h4>
+                            <p>Annual Decline Rate</p>
+                            <small class="text-warning"><i class="fas fa-minus"></i> Within expected range</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-droplet"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h4>22.4%</h4>
+                            <p>Avg Water Cut</p>
+                            <small class="text-success"><i class="fas fa-arrow-down"></i> -1.2% this quarter</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="insight-card">
+                        <div class="insight-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h4>3</h4>
+                            <p>Active Alerts</p>
+                            <small class="text-danger"><i class="fas fa-bell"></i> Requires attention</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Insights Grid -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="insight-card h-100">
+                        <div class="insight-header">
+                            <h5>Anomaly Detection</h5>
+                            <span class="badge bg-warning">3 Alerts</span>
+                        </div>
+                        <div class="anomalies-list" id="anomalies-list">
+                            <!-- Anomalies will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="insight-card h-100">
+                        <div class="insight-header">
+                            <h5>Field Recommendations</h5>
+                            <span class="badge bg-info">Updated</span>
+                        </div>
+                        <div class="recommendations-list">
+                            <div class="recommendation-item">
+                                <div class="rec-priority high"></div>
+                                <div class="rec-content">
+                                    <h6>Paloch Water Handling</h6>
+                                    <p class="small">Consider ESP optimization for wells showing >35% water cut to maintain production efficiency.</p>
+                                </div>
+                            </div>
+                            <div class="recommendation-item">
+                                <div class="rec-priority medium"></div>
+                                <div class="rec-content">
+                                    <h6>Melut Infill Opportunity</h6>
+                                    <p class="small">Geological model suggests 2-3 additional drilling locations in the northeast section.</p>
+                                </div>
+                            </div>
+                            <div class="recommendation-item">
+                                <div class="rec-priority low"></div>
+                                <div class="rec-content">
+                                    <h6>Unity Field Monitoring</h6>
+                                    <p class="small">Schedule routine pressure surveys to validate current reservoir pressure estimates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container py-5">
+            <div class="section-title text-white">
+                <h2>Get in Touch</h2>
+                <p>Ready to optimize your operations? Contact our team of energy experts.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h4>Office Location</h4>
+                        <p>Juba, South Sudan<br>Central Business District</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h4>Phone</h4>
+                        <p>+211 XXX XXX XXX<br>24/7 Emergency Line</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h4>Email</h4>
+                        <p>info@quirebyepetrovision.com<br>support@quirebyepetrovision.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div class="modal fade" id="settingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dashboard Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="refresh-interval" class="form-label">Auto-refresh Interval (ms)</label>
+                        <input type="number" class="form-control" id="refresh-interval" value="60000">
+                    </div>
+                    <div class="mb-3">
+                        <label for="units" class="form-label">Units</label>
+                        <select class="form-select" id="units">
+                            <option value="metric">Metric</option>
+                            <option value="imperial">Imperial</option>
+                        </select>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="notifications" checked>
+                        <label class="form-check-label" for="notifications">
+                            Enable Notifications
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-settings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Well Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-section">
+                        <div class="drop-zone" id="drop-zone">
+                            <div class="file-upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <p>Drag & drop your CSV file here, or click to browse</p>
+                            <p class="small text-muted">Supports CSV files up to 10MB</p>
+                            <input type="file" id="file-input" accept=".csv" hidden>
+                        </div>
+                        <div class="mt-3">
+                            <a href="#" id="download-sample" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download me-1"></i> Download Sample Template
+                            </a>
+                        </div>
+                    </div>
+                    <div id="upload-status"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="process-data-btn" disabled>Process Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Well Details Modal -->
+    <div class="modal fade" id="wellDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="wellDetailsTitle">Well Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="wellDetailsBody">
+                    <!-- Well details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Category,Field,Jan-24,Feb-24,Mar-24,Apr-24,May-24,Jun-24,Jul-24,Aug-24,Sep-24,Oct-24,Nov-24,Dec-24,Unit
+Oil Production,Paloch,120,122,124,121,118,115,118,120,123,125,127,129,MBbl/d
+Oil Production,Melut,85,87,89,86,83,80,84,87,90,92,95,98,MBbl/d
+Oil Production,Unity,95,98,102,99,96,93,97,100,103,106,109,112,MBbl/d
+Gas Production,Paloch,42,43,43,42,41,40,41,42,43,44,44,45,MMscf/d
+Gas Production,Melut,28,29,30,29,28,27,28,29,30,31,32,33,MMscf/d
+Gas Production,Unity,35,36,38,37,36,35,37,38,39,40,41,42,MMscf/d
+Gas Flared,Paloch,8,8,8,8,8,8,8,8,8,8,8,8,MMscf/d
+Gas Flared,Melut,5,5,5,5,5,5,5,5,5,5,5,5,MMscf/d
+Gas Flared,Unity,6,6,6,6,6,6,6,6,6,6,6,6,MMscf/d
+Water Cut,Paloch,42.0,41.9,42.0,42.1,42.2,42.2,42.1,42.0,42.0,42.1,42.0,42.1,%
+Water Cut,Melut,38.5,38.4,38.6,38.7,38.8,38.9,38.7,38.5,38.4,38.6,38.5,38.7,%
+Water Cut,Unity,35.2,35.1,35.3,35.4,35.5,35.6,35.4,35.2,35.1,35.3,35.2,35.4,%
+Well Count,Paloch,12,12,12,12,12,12,12,12,12,12,12,12,Count
+Well Count,Melut,8,8,8,8,8,8,8,8,8,8,8,8,Count
+Well Count,Unity,10,10,10,10,10,10,10,10,10,10,10,10,Count
