@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Management | Analyst Guide</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style> body { background:#ffffff; } .card{ border:none; box-shadow:0 2px 8px rgba(0,0,0,.06);} </style>
+</head>
+<body class="py-4">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h4 mb-0">Analyst Features & Usage</h1>
+      <a href="index.html" class="btn btn-outline-primary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card p-3 h-100">
+          <h2 class="h6">Anomaly Detection</h2>
+          <p>Large daily change and high water cut are flagged automatically. Thresholds are defined in <code>js/utils/constants.js</code>:</p>
+          <pre class="mb-0"><code>ANALYTICS: { anomalyChangePct: 15, highWaterCutPct: 50 }</code></pre>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card p-3 h-100">
+          <h2 class="h6">Decline Forecast</h2>
+          <p>Field-level exponential decline is generated for 12 months by default. Adjust defaults in <code>CONSTANTS.ANALYTICS</code>.</p>
+          <ul class="mb-0">
+            <li>Monthly decline default: 7%</li>
+            <li>Horizon default: 12 months</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card p-3 h-100">
+          <h2 class="h6">CSV Workflow</h2>
+          <ol class="mb-0">
+            <li>Open Upload Data modal</li>
+            <li>Download template or drag-and-drop CSV</li>
+            <li>Process data to refresh KPIs, charts and table</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card p-3 h-100">
+          <h2 class="h6">Quick Tips</h2>
+          <ul class="mb-0">
+            <li>Use top filter buttons to segment by field</li>
+            <li>Export current dataset via Export button</li>
+            <li>Adjust refresh interval in Settings</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 small text-muted">This guide is auto-generated to document current capabilities.</div>
+  </div>
+</body>
+</html>

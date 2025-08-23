@@ -1,0 +1,1 @@
+divide the code into a whole project like the one you designed above. also correct the dashboard error where top 5 wells are display in the top bar below the title and should not replace the production by field previous function. also the upload data seems to be down. fix these bugs

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuireBye PetroVision - Field Management System</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-oil-well me-2"></i>QuireBye PetroVision
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="management">
+                            <i class="fas fa-users-cog me-1"></i>Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="projects">
+                            <i class="fas fa-project-diagram me-1"></i>Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="contact">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Page -->
+    <section id="dashboard" class="page-section">
+        <div class="container-fluid">
+            <!-- Hero Section -->
+            <div class="hero">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h1 class="display-4 fw-bold mb-3">South Sudan Oil & Gas Operations</h1>
+                            <p class="lead mb-4">Real-time monitoring and analytics for petroleum field management across Melut and Muglad basins</p>
+                            <div class="hero-stats">
+                                <div class="stat-item">
+                                    <strong id="total-wells">0</strong>
+                                    <span>Active Wells</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong id="total-production">0</strong>
+                                    <span>BOE/day</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong id="active-fields">0</strong>
+                                    <span>Fields</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="hero-image">
+                                <i class="fas fa-oil-well"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="container my-5">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="kpi-item">
+                            <div class="kpi-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">Total Production</div>
+                                <div class="kpi-value" id="kpi-production">0 BOE/d</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-item">
+                            <div class="kpi-icon">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">Active Wells</div>
+                                <div class="kpi-value" id="kpi-wells">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-item">
+                            <div class="kpi-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">Fields</div>
+                                <div class="kpi-value" id="kpi-fields">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="kpi-item">
+                            <div class="kpi-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">Avg Water Cut</div>
+                                <div class="kpi-value" id="kpi-watercut">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="container my-5">
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">Production by Field</div>
+                            <div class="chart-container">
+                                <canvas id="productionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">Well Status Distribution</div>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-4">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">Field Forecast (12 months)</div>
+                            <div class="chart-container">
+                                <canvas id="forecastChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">Water Cut Analysis</div>
+                            <div class="chart-container">
+                                <canvas id="waterCutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wells Table -->
+            <div class="container my-5">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Well Performance</h5>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn active" data-field="all">All Fields</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" data-field="paloch">Paloch</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" data-field="heglig">Heglig</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm filter-btn" data-field="unity">Unity</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="wells-table">
+                                <thead>
+                                    <tr>
+                                        <th>Well Name</th>
+                                        <th>Field</th>
+                                        <th>Status</th>
+                                        <th>Production (BOE/d)</th>
+                                        <th>Change (%)</th>
+                                        <th>Water Cut (%)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wells-table-body">
+                                    <!-- Wells data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <button class="btn btn-outline-secondary btn-sm" id="prev-page" disabled>Previous</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="next-page">Next</button>
+                            </div>
+                            <small class="text-muted">Showing wells 1-10 of <span id="total-wells-count">0</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Management Page -->
+    <section id="management" class="page-section" style="display: none;">
+        <div class="container-fluid">
+            <!-- CEO Profile Section -->
+            <div class="row mb-5">
+                <div class="col-lg-4">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <img src="https://via.placeholder.com/80x80/1282c4/ffffff?text=NM" alt="CEO" class="profile-image">
+                            <div>
+                                <h3 class="mb-1">Nyok Wuor Miyar</h3>
+                                <p class="profile-title mb-2">Executive CEO</p>
+                                <div class="profile-badges">
+                                    <span class="badge bg-light text-dark">Petroleum Engineer</span>
+                                    <span class="badge bg-light text-dark">MBA</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-content">
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <strong>15+</strong>
+                                    <span>Years Experience</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong>50+</strong>
+                                    <span>Projects Led</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong>$2B+</strong>
+                                    <span>Value Created</span>
+                                </div>
+                            </div>
+                            <p class="mb-3">Visionary leader with extensive experience in petroleum engineering and field development across East Africa. Specialized in reservoir management, production optimization, and digital transformation of oil & gas operations.</p>
+                            <div class="d-grid gap-2">
+                                <a href="#" class="btn btn-primary btn-sm">Download CV</a>
+                                <a href="#contact" class="btn btn-outline-secondary btn-sm" data-page="contact">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-8">
+                    <div class="company-history-card">
+                        <div class="card-header">
+                            <h4 class="mb-0">QuireBye PetroVision History</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>2018 - Company Founded</h6>
+                                        <p>QuireBye PetroVision established with a vision to revolutionize petroleum operations in South Sudan through advanced analytics and digital solutions.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>2019 - First Major Contract</h6>
+                                        <p>Secured partnership with major oil operators in Paloch field, implementing real-time monitoring systems and production optimization protocols.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>2021 - Technology Expansion</h6>
+                                        <p>Launched advanced predictive analytics platform, integrating machine learning algorithms for enhanced reservoir management and forecasting.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6>2023 - Regional Leadership</h6>
+                                        <p>Became the leading petroleum technology provider in South Sudan, managing over 200 wells across multiple fields with 99.9% uptime.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics Section -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-line me-2"></i>Well Logs Analysis</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-zone" id="wellLogsUpload">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h6>Upload Well Logs CSV</h6>
+                                <p class="text-muted mb-3">Expected headers: Depth, WOB, SURF_RPM, ROP_AVG, PHIF, VSH, SW, KLOGH</p>
+                                <button class="btn btn-primary">Choose File</button>
+                                <input type="file" id="wellLogsFile" accept=".csv" style="display: none;">
+                            </div>
+                            
+                            <div id="wellLogsResults" style="display: none;" class="mt-4">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <div class="kpi-item">
+                                            <div class="kpi-content">
+                                                <div class="kpi-title">Total Depth</div>
+                                                <div class="kpi-value" id="totalDepth">0 ft</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="kpi-item">
+                                            <div class="kpi-content">
+                                                <div class="kpi-title">Avg ROP</div>
+                                                <div class="kpi-value" id="avgROP">0 ft/hr</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="wellLogsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-gas-pump me-2"></i>Petroleum Prices Analysis</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-zone" id="pricesUpload">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h6>Upload Prices CSV</h6>
+                                <p class="text-muted mb-3">Expected headers: INDEX, TOWN, STATE, DATES, PRICES</p>
+                                <button class="btn btn-primary">Choose File</button>
+                                <input type="file" id="pricesFile" accept=".csv" style="display: none;">
+                            </div>
+                            
+                            <div id="pricesResults" style="display: none;" class="mt-4">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6">
+                                        <div class="kpi-item">
+                                            <div class="kpi-content">
+                                                <div class="kpi-title">Total Cities</div>
+                                                <div class="kpi-value" id="totalCities">0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="kpi-item">
+                                            <div class="kpi-content">
+                                                <div class="kpi-title">Avg Price</div>
+                                                <div class="kpi-value" id="avgPrice">$0.00</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="pricesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GitHub Projects Section -->
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="section-title text-center mb-4">
+                        <h2>GitHub Projects</h2>
+                        <p>Open-source contributions and ongoing development projects</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-chart-bar"></i></div>
+                            <span class="project-status status-ongoing">Ongoing</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>Data Analysis for Petroleum Engineering</h5>
+                            <p class="project-description">Comprehensive data analysis tools and algorithms specifically designed for petroleum engineering applications, including reservoir modeling, production optimization, and well performance analysis.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fab fa-python"></i> Python</span>
+                                <span class="stat-item"><i class="fas fa-star"></i> 45</span>
+                                <span class="stat-item"><i class="fas fa-code-branch"></i> 12</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/nyokwuor/petroleum-data-analysis" target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github me-1"></i>View on GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-robot"></i></div>
+                            <span class="project-status status-ongoing">Ongoing</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>ML and AI in Oil Industry</h5>
+                            <p class="project-description">Machine learning and artificial intelligence applications for the oil and gas industry, featuring predictive maintenance, anomaly detection, and production forecasting models.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fab fa-python"></i> Python</span>
+                                <span class="stat-item"><i class="fas fa-star"></i> 78</span>
+                                <span class="stat-item"><i class="fas fa-code-branch"></i> 23</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/nyokwuor/oil-industry-ml-ai" target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github me-1"></i>View on GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-code"></i></div>
+                            <span class="project-status status-ongoing">Ongoing</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>Personal Projects</h5>
+                            <p class="project-description">Collection of personal development projects including web applications, data visualization tools, and experimental software solutions for various engineering challenges.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fab fa-js-square"></i> JavaScript</span>
+                                <span class="stat-item"><i class="fas fa-star"></i> 32</span>
+                                <span class="stat-item"><i class="fas fa-code-branch"></i> 8</span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="https://github.com/nyokwuor/personal-projects" target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github me-1"></i>View on GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Page -->
+    <section id="projects" class="page-section" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title text-center mb-5">
+                        <h1>Our Projects</h1>
+                        <p class="lead">Innovative solutions and ongoing developments in petroleum engineering</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-map-marked-alt"></i></div>
+                            <span class="project-status status-ongoing">Ongoing</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>Paloch Field Development</h5>
+                            <p class="project-description">Multi-well infill program targeting higher permeability zones to reduce decline and increase oil cut in the Paloch field.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fas fa-calendar"></i> 2024-2025</span>
+                                <span class="stat-item"><i class="fas fa-dollar-sign"></i> $50M</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-cogs"></i></div>
+                            <span class="project-status status-ongoing">Ongoing</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>Digital Transformation Initiative</h5>
+                            <p class="project-description">Implementation of IoT sensors, real-time monitoring systems, and predictive analytics across all field operations.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fas fa-calendar"></i> 2023-2024</span>
+                                <span class="stat-item"><i class="fas fa-dollar-sign"></i> $25M</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div class="project-icon"><i class="fas fa-leaf"></i></div>
+                            <span class="project-status status-planning">Planning</span>
+                        </div>
+                        <div class="project-content">
+                            <h5>Environmental Sustainability Program</h5>
+                            <p class="project-description">Comprehensive environmental monitoring and carbon footprint reduction initiatives across all operations.</p>
+                            <div class="project-stats">
+                                <span class="stat-item"><i class="fas fa-calendar"></i> 2024-2026</span>
+                                <span class="stat-item"><i class="fas fa-dollar-sign"></i> $15M</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Page -->
+    <section id="contact" class="page-section" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title text-center mb-5">
+                        <h1>Contact Us</h1>
+                        <p class="lead">Get in touch with our team</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>Contact Information</h5>
+                                    <p><i class="fas fa-envelope me-2"></i>info@quirebypetrovision.com</p>
+                                    <p><i class="fas fa-phone me-2"></i>+211 XXX XXX XXX</p>
+                                    <p><i class="fas fa-map-marker-alt me-2"></i>Juba, South Sudan</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Business Hours</h5>
+                                    <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
+                                    <p>Saturday: 9:00 AM - 2:00 PM</p>
+                                    <p>Sunday: Closed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Well Details Modal -->
+    <div class="modal fade" id="wellDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Well Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="well-details-content">
+                    <!-- Well details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Application Scripts -->
+    <script type="module" src="js/app.js"></script>
+    <script src="js/management-dashboard.js"></script>
+</body>
+</html>

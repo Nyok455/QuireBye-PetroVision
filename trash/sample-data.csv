@@ -1,0 +1,26 @@
+Well Name,Field,Status,Production (BOE/d),% Change,Water Cut (%)
+Eagle Ford #12-345,Eagle Ford,Producing,1245,5.2,18.3
+Permian Basin #67-890,Permian Basin,Producing,1187,3.7,22.1
+Bakken #45-678,Bakken,Producing,987,-1.2,25.6
+Haynesville #23-456,Haynesville,Shut-in,0,0.0,0
+Niobrara #34-567,Niobrara,Drilling,150,0.0,12.4
+Eagle Ford #98-765,Eagle Ford,Producing,876,2.8,19.7
+Permian Basin #12-345,Permian Basin,Producing,1345,4.3,16.8
+Bakken #67-890,Bakken,Producing,765,-2.1,28.3
+Haynesville #45-678,Haynesville,Producing,543,1.5,22.7
+Niobrara #23-456,Niobrara,Producing,432,0.8,24.9
+Eagle Ford #11-222,Eagle Ford,Producing,1111,3.2,17.5
+Permian Basin #33-444,Permian Basin,Producing,1333,2.5,20.1
+Bakken #55-666,Bakken,Producing,955,-0.8,26.3
+Haynesville #77-888,Haynesville,Producing,777,1.8,23.5
+Niobrara #99-000,Niobrara,Producing,499,0.5,25.1
+Eagle Ford #44-555,Eagle Ford,Producing,1089,4.1,20.2
+Permian Basin #66-777,Permian Basin,Producing,1456,6.3,18.9
+Bakken #88-999,Bakken,Producing,823,-0.5,27.1
+Haynesville #22-333,Haynesville,Producing,654,2.2,21.8
+Niobrara #55-666,Niobrara,Producing,378,1.1,26.4
+Eagle Ford #77-888,Eagle Ford,Producing,1234,3.8,19.5
+Permian Basin #99-000,Permian Basin,Producing,1567,5.7,17.3
+Bakken #11-222,Bakken,Producing,698,-1.8,29.2
+Haynesville #33-444,Haynesville,Producing,589,1.9,23.1
+Niobrara #66-777,Niobrara,Producing,445,0.6,25.8
