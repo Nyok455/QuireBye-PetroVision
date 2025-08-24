@@ -16,7 +16,10 @@ export class ManagementHandler {
     const uploadWellLogsBtn = document.getElementById("upload-well-logs");
     if (uploadWellLogsBtn) {
       uploadWellLogsBtn.addEventListener("click", () => {
-        new bootstrap.Modal(document.getElementById("wellLogsModal")).show();
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          document.getElementById("wellLogsModal")
+        );
+        modal.show();
       });
     }
 
@@ -24,7 +27,10 @@ export class ManagementHandler {
     const uploadPriceBtn = document.getElementById("upload-price-data");
     if (uploadPriceBtn) {
       uploadPriceBtn.addEventListener("click", () => {
-        new bootstrap.Modal(document.getElementById("priceDataModal")).show();
+        const modal = bootstrap.Modal.getOrCreateInstance(
+          document.getElementById("priceDataModal")
+        );
+        modal.show();
       });
     }
 
@@ -67,8 +73,13 @@ export class ManagementHandler {
 
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dropZone.classList.remove("dragover");
-      if (e.dataTransfer.files.length > 0) {
+      if (
+        e.dataTransfer &&
+        e.dataTransfer.files &&
+        e.dataTransfer.files.length > 0
+      ) {
         fileInput.files = e.dataTransfer.files;
         this.handleFileSelection(
           e.dataTransfer.files[0],
@@ -85,6 +96,14 @@ export class ManagementHandler {
         this.processWellLogsData(fileInput.files[0]);
       }
     });
+
+    // Ensure cleanup when modal fully hides
+    const modalEl = document.getElementById("wellLogsModal");
+    if (modalEl) {
+      modalEl.addEventListener("hidden.bs.modal", () =>
+        this.cleanupBackdrops()
+      );
+    }
   }
 
   setupPriceDataModal() {
@@ -106,6 +125,8 @@ export class ManagementHandler {
           processBtn,
           "price-data"
         );
+        const status = document.getElementById("price-upload-status");
+        if (status) status.innerHTML = "";
       }
     });
 
@@ -121,8 +142,13 @@ export class ManagementHandler {
 
     dropZone.addEventListener("drop", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dropZone.classList.remove("dragover");
-      if (e.dataTransfer.files.length > 0) {
+      if (
+        e.dataTransfer &&
+        e.dataTransfer.files &&
+        e.dataTransfer.files.length > 0
+      ) {
         fileInput.files = e.dataTransfer.files;
         this.handleFileSelection(
           e.dataTransfer.files[0],
@@ -130,6 +156,8 @@ export class ManagementHandler {
           processBtn,
           "price-data"
         );
+        const status = document.getElementById("price-upload-status");
+        if (status) status.innerHTML = "";
       }
     });
 
@@ -139,6 +167,14 @@ export class ManagementHandler {
         this.processPriceData(fileInput.files[0]);
       }
     });
+
+    // Ensure cleanup when modal fully hides
+    const modalEl = document.getElementById("priceDataModal");
+    if (modalEl) {
+      modalEl.addEventListener("hidden.bs.modal", () =>
+        this.cleanupBackdrops()
+      );
+    }
   }
 
   handleFileSelection(file, dropZone, processBtn, type) {
@@ -182,9 +218,10 @@ export class ManagementHandler {
 
       // Show success and hide modal
       this.showSuccess("Well logs data processed successfully!");
-      bootstrap.Modal.getInstance(
-        document.getElementById("wellLogsModal")
-      ).hide();
+      const modalEl = document.getElementById("wellLogsModal");
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+      setTimeout(() => this.cleanupBackdrops(), 0);
     } catch (error) {
       this.showError(`Error processing well logs: ${error.message}`);
     }
@@ -229,14 +266,31 @@ export class ManagementHandler {
       this.renderPriceFluctuationChart();
       this.updatePriceSummary();
 
-      // Show success and hide modal
-      this.showSuccess("Price data processed successfully!");
-      bootstrap.Modal.getInstance(
-        document.getElementById("priceDataModal")
-      ).hide();
+      // Show success and hide modal (forecast-like pattern)
+      const status = document.getElementById("price-upload-status");
+      if (status)
+        status.innerHTML =
+          '<div class="alert alert-success">Price data processed successfully.</div>';
+      const modalEl = document.getElementById("priceDataModal");
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+      setTimeout(() => this.cleanupBackdrops(), 0);
+
+      // Optionally ensure user is on Management page to see updates
+      if (typeof window?.app?.showPage === "function") {
+        setTimeout(() => window.app.showPage("management"), 200);
+      }
     } catch (error) {
       this.showError(`Error processing price data: ${error.message}`);
     }
+  }
+
+  cleanupBackdrops() {
+    // Remove any lingering backdrops or body classes that can freeze the UI
+    document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
   }
 
   parseCSV(text) {
@@ -377,11 +431,20 @@ export class ManagementHandler {
     });
 
     // Create datasets for top 5 towns
-    const towns = Object.keys(townData).slice(0, 5);
+    const towns = Object.keys(townData)
+      .filter((t) => t && t !== "null" && t !== "undefined")
+      .slice(0, 5);
     const colors = ["#1282c4", "#7dd56f", "#ff9800", "#f44336", "#9c27b0"];
 
-    // Create date labels from the data
-    const dates = [...new Set(this.priceData.map((d) => d.DATES))].sort();
+    // Create date labels from the data (chronologically sorted)
+    const uniqueDates = Array.from(new Set(this.priceData.map((d) => d.DATES)));
+    const dates = uniqueDates
+      .map((ds) => ({
+        ds,
+        ts: Date.parse(ds) || Date.parse(ds.replace(/\//g, "-")) || 0,
+      }))
+      .sort((a, b) => a.ts - b.ts)
+      .map((x) => x.ds);
 
     canvas.chart = new Chart(ctx, {
       type: "line",

@@ -217,12 +217,60 @@ class OilGasDashboard {
     if (dateFilter)
       dateFilter.addEventListener("change", () => this.populateTable());
 
-    // Export
+    // Export (table CSV)
     const exportBtn = document.getElementById("export-btn");
     if (exportBtn)
       exportBtn.addEventListener("click", () =>
         this.files.exportCSV(this.wellData)
       );
+
+    // Insights PDF export
+    const exportInsightsBtn = document.getElementById("insights-export-pdf");
+    if (exportInsightsBtn) {
+      exportInsightsBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          // set date
+          const dateSpan = document.getElementById("insights-report-date");
+          if (dateSpan) dateSpan.textContent = new Date().toLocaleString();
+          // render to canvas and export to PDF
+          const { jsPDF } = window.jspdf;
+          const reportEl = document.getElementById("insights-report-content");
+          const canvas = await html2canvas(reportEl, {
+            scale: 2,
+            backgroundColor: "#ffffff",
+          });
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const imgWidth = pageWidth - 40; // margins
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          let y = 20;
+          if (imgHeight <= pageHeight - 40) {
+            pdf.addImage(imgData, "PNG", 20, y, imgWidth, imgHeight);
+          } else {
+            // paginate long content
+            let position = 0;
+            while (position < imgHeight) {
+              pdf.addImage(
+                imgData,
+                "PNG",
+                20,
+                20 - position,
+                imgWidth,
+                imgHeight
+              );
+              position += pageHeight - 40;
+              if (position < imgHeight) pdf.addPage();
+            }
+          }
+          pdf.save("Operational_Intelligence_Report.pdf");
+        } catch (err) {
+          alert("Failed to export PDF: " + err.message);
+        }
+      });
+    }
 
     // Settings modal
     const settingsBtn = document.getElementById("settings-btn");
@@ -270,6 +318,27 @@ class OilGasDashboard {
     // File upload handling
     this.setupFileUploadListeners();
 
+    // Insights articles modal - delegate clicks on news cards
+    document
+      .querySelectorAll("#insights .insight-card a.btn-outline-primary")
+      .forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const card = e.currentTarget.closest(".insight-card");
+          const img = card.querySelector("img");
+          const title =
+            card.querySelector("h5")?.textContent?.trim() || "Insight Article";
+          const meta = card.querySelector("small")?.textContent?.trim() || "";
+          const article = this.getInsightArticleByTitle(title);
+          this.openInsightArticle({
+            title,
+            body: article.body,
+            image: img?.getAttribute("src") || "",
+            meta,
+          });
+        });
+      });
+
     // Forecast CSV upload
     const uploadForecastBtn = document.getElementById("upload-forecast-btn");
     if (uploadForecastBtn)
@@ -296,6 +365,110 @@ class OilGasDashboard {
           document.getElementById("settingsModal")
         ).hide();
       });
+  }
+
+  // Return generated article content for known titles (South Sudan focus)
+  getInsightArticleByTitle(title) {
+    const articles = {
+      "Nilepet outlines 2025 upstream strategy": `
+<p><strong>Juba</strong> — Nile Petroleum Corporation (Nilepet) set out a 2025 upstream strategy focused on stabilizing production in the Melut and Muglad basins while deepening local content and building technical capacity.</p>
+<ul>
+  <li>Selective infill drilling and workovers to counter decline</li>
+  <li>ESP optimization program with reliability KPIs</li>
+  <li>Enhanced water handling and separator tuning to reduce water cut</li>
+  <li>Training partnerships with regional operators and universities</li>
+</ul>
+<p>Management indicated that the plan balances near‑term integrity and flow assurance priorities with medium‑term growth options. The program is expected to improve uptime and extend plateau levels under conservative price assumptions.</p>`,
+      "GPOC ramps up well interventions": `
+<p><strong>Unity assets</strong> — GPOC announced a sequence of well interventions targeting ESP performance, sanding mitigation, and incremental liquids uplift across producing corridors.</p>
+<ul>
+  <li>Priority on high‑drawdown wells showing rising current draw</li>
+  <li>Deferred production recovery via selective recompletions</li>
+  <li>Facility checks on separator efficiency and produced water systems</li>
+</ul>
+<p>The campaign is coordinated with facility availability windows to minimize downtime and optimize back‑allocation accuracy.</p>`,
+      "Pipeline integrity program update": `
+<p><strong>Trunk lines</strong> — An integrated integrity program is being rolled out, combining coupon monitoring, corrosion inhibition, and inline inspection scheduling. Early focus is on segments with elevated water cut and flow regime changes.</p>
+<ul>
+  <li>ILI planning on priority sections with pressure deviations</li>
+  <li>Corrosion risk mapping using flow, temperature, and water chemistry</li>
+  <li>Targeted mitigation and inspection frequency adjustments</li>
+</ul>
+<p>The initiative aims to reduce unplanned downtime and ensure export reliability through 2025.</p>`,
+      "Petronas launches graduate training cohort": `
+<p><strong>Kuala Lumpur/Juba</strong> — Petronas opened applications for a new graduate training cohort with pathways in process engineering, reliability, and subsurface analytics. The program includes mentorship and practical modules tailored for African upstream assets.</p>
+<ul>
+  <li>12‑month rotation including facility exposure and digital tools</li>
+  <li>Reservoir characterization and production data analytics</li>
+  <li>HSE leadership and integrity fundamentals</li>
+</ul>
+<p>Graduates will be positioned to support production optimization initiatives in South Sudan and the wider region.</p>`,
+      "Global prices: impact on Dar blend economics": `
+<p><strong>Market view</strong> — Volatility in global benchmarks continues to influence realized pricing for Dar blend, with freight dynamics and quality adjustments shaping netbacks.</p>
+<ul>
+  <li>Scenario analysis under Brent ±10% with shipping sensitivities</li>
+  <li>Crude quality differentials and dilution strategies</li>
+  <li>Hedging considerations for budget planning</li>
+</ul>
+<p>Despite volatility, disciplined operations and reliability improvements help protect margins.</p>`,
+      "University partnerships on energy research": `
+<p><strong>Juba</strong> — Collaboration with the University of Juba continues on reservoir characterization and data integration projects, enhancing local research capacity.</p>
+<ul>
+  <li>Joint studies on petrophysical trends and water cut behavior</li>
+  <li>Open datasets for production and pressure analysis</li>
+  <li>Workshops on Python/ML for field analytics</li>
+</ul>
+<p>These partnerships provide a sustainable pipeline of local talent and applied research.</p>`,
+      "Chevron technical assistance on integrity": `
+<p><strong>Advisory</strong> — Chevron technical advisors shared best practices on corrosion monitoring and ILI planning applicable to trunk lines supporting South Sudan exports.</p>
+<ul>
+  <li>Risk‑based inspection and data management approaches</li>
+  <li>Chemistry optimization for produced water handling</li>
+  <li>Case studies on failure modes and mitigation</li>
+</ul>
+<p>Knowledge transfer supports reliability targets and incident prevention.</p>`,
+      "Operations snapshot: Melut basin": `
+<p><strong>Operations</strong> — Weekly snapshot indicates stable production with minor variance to plan. Injection conformance and lift performance remain key levers.</p>
+<ul>
+  <li>Injection rates aligned with pattern health objectives</li>
+  <li>ESP current monitoring flags early performance drift</li>
+  <li>Deferred production tracking and quick‑win workovers</li>
+</ul>
+<p>Focus areas: separator tuning, gas handling, and downtime minimization.</p>`,
+      "Unity assets reliability update": `
+<p><strong>Reliability</strong> — Critical rotating equipment MTBF improved quarter‑on‑quarter with spares strategy and PdM adoption.</p>
+<ul>
+  <li>Compressor vibration trend monitoring and alerting</li>
+  <li>Power system reliability KPIs and black‑start drills</li>
+  <li>Turnaround planning for 2025 integrity scope</li>
+</ul>
+<p>Expected gains include higher uptime and reduced deferrals through peak season.</p>`,
+    };
+
+    const body =
+      articles[title] || `<p>Detailed analysis and updates for: ${title}.</p>`;
+    return { body };
+  }
+
+  openInsightArticle({ title, body, image, meta }) {
+    const modalEl = document.getElementById("insightArticleModal");
+    if (!modalEl) return;
+    const titleEl = document.getElementById("insightArticleTitle");
+    const bodyEl = document.getElementById("insightArticleBody");
+    const imageEl = document.getElementById("insightArticleImage");
+    const metaEl = document.getElementById("insightArticleMeta");
+
+    if (titleEl) titleEl.textContent = title;
+    if (metaEl) metaEl.textContent = meta;
+    if (bodyEl) bodyEl.innerHTML = body;
+    if (image && imageEl) {
+      imageEl.src = image;
+      imageEl.style.display = "block";
+    } else if (imageEl) {
+      imageEl.style.display = "none";
+    }
+
+    new bootstrap.Modal(modalEl).show();
   }
 
   setupFileUploadListeners() {
